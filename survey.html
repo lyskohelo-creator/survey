@@ -146,27 +146,52 @@
 
     /* ── Вибір ПК ── */
     .pc-selector { display: none; margin-top: 12px; }
-    .pc-selector label {
+
+    .multi-pc-banner {
+      background: #fff8e1;
+      border: 1px solid #f9a825;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
       font-size: 0.875rem;
-      font-weight: 500;
-      color: #4a5568;
+      color: #5f4200;
+      line-height: 1.5;
+    }
+    .multi-pc-banner strong { display: block; margin-bottom: 4px; font-size: 0.95rem; }
+
+    .pc-select-prompt {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #2d3748;
       margin-bottom: 8px;
     }
-    .pc-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pc-radio-group { display: flex; flex-direction: column; gap: 8px; }
     .pc-radio-btn {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border: 1px solid #cbd5e0;
-      border-radius: 20px;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       transition: all 0.15s;
+      background: #fafafa;
     }
     .pc-radio-btn:hover { border-color: #1a73e8; background: #f0f7ff; }
-    .pc-radio-btn input { accent-color: #1a73e8; }
-    .pc-radio-btn.selected { border-color: #1a73e8; background: #e8f0fe; font-weight: 500; }
+    .pc-radio-btn input { accent-color: #1a73e8; width: 18px; height: 18px; flex-shrink: 0; }
+    .pc-radio-btn.selected { border-color: #1a73e8; background: #e8f0fe; font-weight: 600; }
+
+    .pc-current-label {
+      display: none;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #e8f0fe;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #1a73e8;
+      font-weight: 500;
+    }
 
     /* ── Radio-варіанти відповідей ── */
     .radio-group { display: flex; flex-direction: column; gap: 10px; }
@@ -411,8 +436,13 @@
       <input type="text" id="pcDisplay" readonly placeholder="Заповниться автоматично після вибору імені">
       <!-- Якщо кілька ПК -->
       <div class="pc-selector" id="pcSelector">
-        <label style="margin-top:10px;">За вами закріплено кілька ПК — оберіть, про який заповнюєте:</label>
+        <div class="multi-pc-banner">
+          <strong>⚠️ За вами закріплено кілька пристроїв</strong>
+          Оберіть один пристрій нижче, заповніть форму і надішліть. Потім поверніться і заповніть ще раз для другого пристрою.
+        </div>
+        <div class="pc-select-prompt">👇 Для якого пристрою заповнюєте зараз?</div>
         <div class="pc-radio-group" id="pcRadioGroup"></div>
+        <div class="pc-current-label" id="pcCurrentLabel"></div>
       </div>
     </div>
   </div>
@@ -480,14 +510,14 @@
       <label>Версія Microsoft Office</label>
       <select id="office_version">
         <option value="">— оберіть версію —</option>
-        <option>Microsoft Office 2010</option>
-        <option>Microsoft Office 2013</option>
-        <option>Microsoft Office 2016</option>
-        <option>Microsoft Office 2019</option>
-        <option>Microsoft Office 2021</option>
-        <option>Microsoft Office 2024 / 365</option>
-        <option>Office не встановлений</option>
-        <option>Не знаю версію</option>
+        <option value="Microsoft Office 2010">Microsoft Office 2010</option>
+        <option value="Microsoft Office 2013">Microsoft Office 2013</option>
+        <option value="Microsoft Office 2016">Microsoft Office 2016</option>
+        <option value="Microsoft Office 2019">Microsoft Office 2019</option>
+        <option value="Microsoft Office 2021">Microsoft Office 2021</option>
+        <option value="Microsoft Office 2024 / 365">Microsoft Office 2024 / 365</option>
+        <option value="Office не встановлений">Office не встановлений</option>
+        <option value="Не знаю версію">Не знаю версію</option>
       </select>
     </div>
 
@@ -888,6 +918,8 @@ function onNameInput() {
   document.getElementById('pcDisplay').value = '';
   document.getElementById('nameValidIcon').style.display = 'none';
   document.getElementById('pcSelector').style.display = 'none';
+  var hint = document.getElementById('pcCurrentLabel');
+  if (hint) { hint.style.display = 'none'; hint.textContent = ''; }
   acActiveIndex = -1;
 
   if (!query) {
@@ -981,6 +1013,11 @@ function onPcChoose(pc) {
   var btn = document.getElementById('pcbtn-' + pc);
   if (btn) btn.classList.add('selected');
   setOfficeVersion(pc);
+  var label = PC_LABELS[parseInt(pc)] || ('ПК №' + pc);
+  document.getElementById('pcDisplay').value = label;
+  var hint = document.getElementById('pcCurrentLabel');
+  hint.textContent = '✅ Заповнюєте для: ' + label;
+  hint.style.display = 'block';
 }
 
 function onNameKey(e) {
