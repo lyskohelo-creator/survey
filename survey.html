@@ -145,52 +145,39 @@
     }
 
     /* ── Вибір ПК ── */
-    .pc-selector { display: none; margin-top: 12px; }
-
-    .multi-pc-banner {
+    /* ── Гумористичний банер для 2 ПК ── */
+    .multi-humor-card {
       background: #fff8e1;
       border: 1px solid #f9a825;
+      border-left: 4px solid #f9a825;
       border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      font-size: 0.875rem;
+      padding: 16px 20px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 0.9rem;
       color: #5f4200;
       line-height: 1.5;
     }
-    .multi-pc-banner strong { display: block; margin-bottom: 4px; font-size: 0.95rem; }
+    .multi-humor-card strong { font-size: 1rem; color: #3d2b00; }
 
-    .pc-select-prompt {
-      font-size: 0.875rem;
+    /* ── Блок окремого ПК ── */
+    .pc-block { border-top: 3px solid #1a73e8; }
+    .pc-block-title { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .pc-block-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1a73e8;
+      letter-spacing: 0.01em;
+    }
+    .pc-subsection {
+      font-size: 0.95rem;
       font-weight: 600;
       color: #2d3748;
-      margin-bottom: 8px;
-    }
-    .pc-radio-group { display: flex; flex-direction: column; gap: 8px; }
-    .pc-radio-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border: 2px solid #cbd5e0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.15s;
-      background: #fafafa;
-    }
-    .pc-radio-btn:hover { border-color: #1a73e8; background: #f0f7ff; }
-    .pc-radio-btn input { accent-color: #1a73e8; width: 18px; height: 18px; flex-shrink: 0; }
-    .pc-radio-btn.selected { border-color: #1a73e8; background: #e8f0fe; font-weight: 600; }
-
-    .pc-current-label {
-      display: none;
-      margin-top: 10px;
-      padding: 8px 12px;
-      background: #e8f0fe;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      color: #1a73e8;
-      font-weight: 500;
+      margin: 18px 0 12px;
+      padding-left: 8px;
+      border-left: 3px solid #cbd5e0;
     }
 
     /* ── Radio-варіанти відповідей ── */
@@ -434,155 +421,14 @@
     <div class="field-group" id="pcField">
       <label>ПК за аудитом</label>
       <input type="text" id="pcDisplay" readonly placeholder="Заповниться автоматично після вибору імені">
-      <!-- Якщо кілька ПК -->
-      <div class="pc-selector" id="pcSelector">
-        <div class="multi-pc-banner">
-          <strong>⚠️ За вами закріплено кілька пристроїв</strong>
-          Оберіть один пристрій нижче, заповніть форму і надішліть. Потім поверніться і заповніть ще раз для другого пристрою.
-        </div>
-        <div class="pc-select-prompt">👇 Для якого пристрою заповнюєте зараз?</div>
-        <div class="pc-radio-group" id="pcRadioGroup"></div>
-        <div class="pc-current-label" id="pcCurrentLabel"></div>
-      </div>
     </div>
   </div>
 
-  <!-- Блок 2: Мова Windows -->
-  <div class="card">
-    <div class="section-title"><span class="section-num">2</span> Мова інтерфейсу Windows</div>
+  <!-- Динамічні блоки для кожного ПК -->
+  <div id="pcBlocks"></div>
 
-    <div class="lang-check">
-      <div class="lang-check-title">🖱️ Як визначити мову Windows — одна дія:</div>
-      <div class="lang-check-action">Правий клік миші по порожньому місцю робочого столу</div>
-      <div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">З'явиться контекстне меню. Порівняйте текст із зразками нижче:</div>
-      <div class="lang-compare">
-        <div class="lang-box lang-box-uk">
-          <span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>
-          <div class="mock-menu">
-            <span class="mock-menu-item">Переглянути</span>
-            <span class="mock-menu-item">Впорядкувати за</span>
-            <span class="mock-menu-item">Оновити</span>
-            <span class="mock-menu-sep"></span>
-            <span class="mock-menu-item highlight"><span>Персоналізація</span></span>
-          </div>
-        </div>
-        <div class="lang-box lang-box-ru">
-          <span class="lang-box-label">🔴 РОСІЙСЬКА</span>
-          <div class="mock-menu">
-            <span class="mock-menu-item">Вид</span>
-            <span class="mock-menu-item">Сортировать по</span>
-            <span class="mock-menu-item">Обновить</span>
-            <span class="mock-menu-sep"></span>
-            <span class="mock-menu-item highlight"><span>Персонализация</span></span>
-          </div>
-        </div>
-      </div>
-      <div style="font-size:0.78rem;color:#718096;margin-top:8px;">
-        💡 Windows 7: правий клік → якщо внизу «<strong>Властивості</strong>» — українська, «<strong>Свойства</strong>» — російська.
-      </div>
-    </div>
-
-    <div class="radio-group">
-      <label class="radio-option" onclick="pick(this,'win_lang')">
-        <input type="radio" name="win_lang" value="Українська">
-        🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span>
-      </label>
-      <label class="radio-option" onclick="pick(this,'win_lang')">
-        <input type="radio" name="win_lang" value="Російська">
-        🔴 Російська <span class="badge badge-ru">! Потребує заміни</span>
-      </label>
-      <label class="radio-option" onclick="pick(this,'win_lang')">
-        <input type="radio" name="win_lang" value="Англійська">
-        🇬🇧 Англійська
-      </label>
-      <label class="radio-option" onclick="pick(this,'win_lang')">
-        <input type="radio" name="win_lang" value="Не знаю">
-        🤷 Не знаю / важко визначити
-      </label>
-    </div>
-  </div>
-
-  <!-- Блок 3: Microsoft Office -->
-  <div class="card">
-    <div class="section-title"><span class="section-num">3</span> Microsoft Office</div>
-
-    <div class="field-group">
-      <label>Версія Microsoft Office</label>
-      <select id="office_version">
-        <option value="">— оберіть версію —</option>
-        <option value="Microsoft Office 2010">Microsoft Office 2010</option>
-        <option value="Microsoft Office 2013">Microsoft Office 2013</option>
-        <option value="Microsoft Office 2016">Microsoft Office 2016</option>
-        <option value="Microsoft Office 2019">Microsoft Office 2019</option>
-        <option value="Microsoft Office 2021">Microsoft Office 2021</option>
-        <option value="Microsoft Office 2024 / 365">Microsoft Office 2024 / 365</option>
-        <option value="Office не встановлений">Office не встановлений</option>
-        <option value="Не знаю версію">Не знаю версію</option>
-      </select>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="lang-check">
-      <div class="lang-check-title">📄 Як визначити мову Office — одна дія:</div>
-      <div class="lang-check-action">Відкрийте будь-який файл Word або Excel</div>
-      <div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">Подивіться на вкладки у верхній панелі. Порівняйте з зразками нижче:</div>
-      <div class="lang-compare">
-        <div class="lang-box lang-box-uk">
-          <span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>
-          <div class="mock-ribbon">
-            <div class="mock-ribbon-tabs">
-              <span class="mock-file-tab">Файл</span>
-              <span class="mock-ribbon-tab active-tab">Основне</span>
-              <span class="mock-ribbon-tab">Вставлення</span>
-              <span class="mock-ribbon-tab">Формули</span>
-            </div>
-          </div>
-        </div>
-        <div class="lang-box lang-box-ru">
-          <span class="lang-box-label">🔴 РОСІЙСЬКА</span>
-          <div class="mock-ribbon">
-            <div class="mock-ribbon-tabs">
-              <span class="mock-file-tab">Файл</span>
-              <span class="mock-ribbon-tab active-tab">Главная</span>
-              <span class="mock-ribbon-tab">Вставка</span>
-              <span class="mock-ribbon-tab">Формулы</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="font-size:0.78rem;color:#718096;margin-top:8px;">
-        💡 Якщо Office не встановлений або не відкривається — оберіть відповідний варіант нижче.
-      </div>
-    </div>
-
-    <label style="margin-bottom:10px;display:block;">Мова інтерфейсу Office <span class="req">*</span></label>
-    <div class="radio-group">
-      <label class="radio-option" onclick="pick(this,'office_lang')">
-        <input type="radio" name="office_lang" value="Українська">
-        🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span>
-      </label>
-      <label class="radio-option" onclick="pick(this,'office_lang')">
-        <input type="radio" name="office_lang" value="Російська">
-        🔴 Російська <span class="badge badge-ru">! Потребує заміни</span>
-      </label>
-      <label class="radio-option" onclick="pick(this,'office_lang')">
-        <input type="radio" name="office_lang" value="Англійська">
-        🇬🇧 Англійська
-      </label>
-      <label class="radio-option" onclick="pick(this,'office_lang')">
-        <input type="radio" name="office_lang" value="Office не встановлений">
-        ⛔ Office не встановлений
-      </label>
-      <label class="radio-option" onclick="pick(this,'office_lang')">
-        <input type="radio" name="office_lang" value="Не знаю">
-        🤷 Не знаю / важко визначити
-      </label>
-    </div>
-  </div>
-
-  <!-- Блок 4: Примітки + Submit -->
-  <div class="card last">
+  <!-- Блок з примітками + Submit -->
+  <div class="card last" id="notesCard" style="display:none">
     <div class="section-title"><span class="section-num">4</span> Додатково (необов'язково)</div>
     <div class="field-group">
       <label>Примітки або запитання до IT-відділу</label>
@@ -917,9 +763,8 @@ function onNameInput() {
   document.getElementById('deptDisplay').value = '';
   document.getElementById('pcDisplay').value = '';
   document.getElementById('nameValidIcon').style.display = 'none';
-  document.getElementById('pcSelector').style.display = 'none';
-  var hint = document.getElementById('pcCurrentLabel');
-  if (hint) { hint.style.display = 'none'; hint.textContent = ''; }
+  document.getElementById('pcBlocks').innerHTML = '';
+  document.getElementById('notesCard').style.display = 'none';
   acActiveIndex = -1;
 
   if (!query) {
@@ -972,52 +817,129 @@ function selectEmployee(idx) {
   document.getElementById('selectedDept').value = emp.dept;
   document.getElementById('deptDisplay').value = emp.dept;
   document.getElementById('nameValidIcon').style.display = 'block';
-
-  // Закриваємо dropdown
   document.getElementById('acDropdown').classList.remove('open');
 
-  // ПК
-  if (emp.pcs.length === 1) {
-    document.getElementById('pcDisplay').value = PC_LABELS[emp.pcs[0]] || ('ПК №' + emp.pcs[0]);
-    document.getElementById('pcSelector').style.display = 'none';
-    setOfficeVersion(emp.pcs[0]);
-  } else {
-    document.getElementById('pcDisplay').value = emp.pcs.map(function(n){ return PC_LABELS[n]||('ПК №'+n); }).join(' / ') + ' — оберіть нижче';
-    buildPcSelector(emp.pcs);
-    document.getElementById('pcSelector').style.display = 'block';
+  document.getElementById('pcDisplay').value = emp.pcs.map(function(n) {
+    return PC_LABELS[n] || ('ПК №' + n);
+  }).join(' | ');
+
+  buildPcBlocks(emp.pcs);
+  document.getElementById('notesCard').style.display = 'block';
+}
+
+function buildPcBlocks(pcs) {
+  var isMulti = pcs.length > 1;
+  var html = '';
+
+  if (isMulti) {
+    html += '<div class="card multi-humor-card">' +
+      '<span style="font-size:1.5rem;">💪</span>' +
+      '<div><strong>Схоже, Ви дуже багато працюєте —<br>за Вами закріплено аж два робочі ПК!</strong>' +
+      '<div style="margin-top:6px;font-size:0.875rem;color:#5f4200;">Заповніть, будь ласка, дані окремо для кожного пристрою нижче — це займе зайвих 2 хвилини 🙂</div></div>' +
+    '</div>';
   }
-}
 
-function buildPcSelector(pcs) {
-  var group = document.getElementById('pcRadioGroup');
-  group.innerHTML = pcs.map(function(pc) {
-    var label = PC_LABELS[pc] || ('ПК №' + pc);
-    return '<label class="pc-radio-btn" id="pcbtn-' + pc + '">' +
-           '<input type="radio" name="pc_choice" value="' + pc + '" onchange="onPcChoose(' + pc + ')"> ' + label +
-           '</label>';
-  }).join('');
-}
+  pcs.forEach(function(pc, i) {
+    var pcLabel = PC_LABELS[pc] || ('ПК №' + pc);
+    var offVer  = OFFICE_VERSIONS[pc] || '';
+    var blockNum = i + 2;
 
-function setOfficeVersion(pcNum) {
-  var ver = OFFICE_VERSIONS[parseInt(pcNum)];
-  var sel = document.getElementById('office_version');
-  if (ver) {
-    sel.value = ver;
-    sel.style.background = '#f0f9ff';
-    sel.style.borderColor = '#1a73e8';
-  }
-}
+    var offOptions = ['Microsoft Office 2010','Microsoft Office 2013','Microsoft Office 2016',
+      'Microsoft Office 2019','Microsoft Office 2021','Microsoft Office 2024 / 365',
+      'Office не встановлений','Не знаю версію'].map(function(v) {
+        return '<option value="' + v + '"' + (v === offVer ? ' selected' : '') + '>' + v + '</option>';
+    }).join('');
 
-function onPcChoose(pc) {
-  document.querySelectorAll('.pc-radio-btn').forEach(function(b) { b.classList.remove('selected'); });
-  var btn = document.getElementById('pcbtn-' + pc);
-  if (btn) btn.classList.add('selected');
-  setOfficeVersion(pc);
-  var label = PC_LABELS[parseInt(pc)] || ('ПК №' + pc);
-  document.getElementById('pcDisplay').value = label;
-  var hint = document.getElementById('pcCurrentLabel');
-  hint.textContent = '✅ Заповнюєте для: ' + label;
-  hint.style.display = 'block';
+    html +=
+      '<div class="card pc-block" id="pcBlock_' + i + '">' +
+        '<div class="section-title pc-block-title">' +
+          '<span class="section-num">' + blockNum + '</span>' +
+          '<span class="pc-block-name">💻 ' + pcLabel + '</span>' +
+        '</div>' +
+
+        '<div class="pc-subsection">🖥️ Мова Windows</div>' +
+        '<div class="lang-check">' +
+          '<div class="lang-check-title">🖱️ Як визначити — одна дія:</div>' +
+          '<div class="lang-check-action">Правий клік миші по порожньому місцю робочого столу</div>' +
+          '<div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">Порівняйте текст контекстного меню із зразками:</div>' +
+          '<div class="lang-compare">' +
+            '<div class="lang-box lang-box-uk"><span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>' +
+              '<div class="mock-menu">' +
+                '<span class="mock-menu-item">Переглянути</span>' +
+                '<span class="mock-menu-item">Впорядкувати за</span>' +
+                '<span class="mock-menu-item">Оновити</span>' +
+                '<span class="mock-menu-sep"></span>' +
+                '<span class="mock-menu-item highlight"><span>Персоналізація</span></span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="lang-box lang-box-ru"><span class="lang-box-label">🔴 РОСІЙСЬКА</span>' +
+              '<div class="mock-menu">' +
+                '<span class="mock-menu-item">Вид</span>' +
+                '<span class="mock-menu-item">Сортировать по</span>' +
+                '<span class="mock-menu-item">Обновить</span>' +
+                '<span class="mock-menu-sep"></span>' +
+                '<span class="mock-menu-item highlight"><span>Персонализация</span></span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:0.78rem;color:#718096;margin-top:8px;">💡 Windows 7: «<strong>Властивості</strong>» — українська, «<strong>Свойства</strong>» — російська.</div>' +
+        '</div>' +
+        '<div class="radio-group">' +
+          '<label class="radio-option" onclick="pick(this,\'win_lang_' + i + '\')"><input type="radio" name="win_lang_' + i + '" value="Українська"> 🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span></label>' +
+          '<label class="radio-option" onclick="pick(this,\'win_lang_' + i + '\')"><input type="radio" name="win_lang_' + i + '" value="Російська"> 🔴 Російська <span class="badge badge-ru">! Потребує заміни</span></label>' +
+          '<label class="radio-option" onclick="pick(this,\'win_lang_' + i + '\')"><input type="radio" name="win_lang_' + i + '" value="Англійська"> 🇬🇧 Англійська</label>' +
+          '<label class="radio-option" onclick="pick(this,\'win_lang_' + i + '\')"><input type="radio" name="win_lang_' + i + '" value="Не знаю"> 🤷 Не знаю / важко визначити</label>' +
+        '</div>' +
+
+        '<div class="divider"></div>' +
+
+        '<div class="pc-subsection">📄 Microsoft Office</div>' +
+        '<div class="field-group" style="margin-bottom:16px;">' +
+          '<label>Версія Office' + (offVer ? ' <span style="font-size:0.78rem;color:#1a73e8;font-weight:400;">— підставлено автоматично, перевірте</span>' : '') + '</label>' +
+          '<select id="office_version_' + i + '" style="background:' + (offVer ? '#f0f9ff;border-color:#1a73e8' : '#fafafa') + '">' +
+            '<option value="">— оберіть версію —</option>' + offOptions +
+          '</select>' +
+        '</div>' +
+        '<div class="lang-check">' +
+          '<div class="lang-check-title">📄 Як визначити мову Office — одна дія:</div>' +
+          '<div class="lang-check-action">Відкрийте будь-який файл Word або Excel</div>' +
+          '<div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">Подивіться на вкладки у верхній панелі:</div>' +
+          '<div class="lang-compare">' +
+            '<div class="lang-box lang-box-uk"><span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>' +
+              '<div class="mock-ribbon"><div class="mock-ribbon-tabs">' +
+                '<span class="mock-file-tab">Файл</span>' +
+                '<span class="mock-ribbon-tab active-tab">Основне</span>' +
+                '<span class="mock-ribbon-tab">Вставлення</span>' +
+                '<span class="mock-ribbon-tab">Формули</span>' +
+              '</div></div>' +
+            '</div>' +
+            '<div class="lang-box lang-box-ru"><span class="lang-box-label">🔴 РОСІЙСЬКА</span>' +
+              '<div class="mock-ribbon"><div class="mock-ribbon-tabs">' +
+                '<span class="mock-file-tab">Файл</span>' +
+                '<span class="mock-ribbon-tab active-tab">Главная</span>' +
+                '<span class="mock-ribbon-tab">Вставка</span>' +
+                '<span class="mock-ribbon-tab">Формулы</span>' +
+              '</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:0.78rem;color:#718096;margin-top:8px;">💡 Якщо Office не встановлений або не відкривається — оберіть відповідний варіант нижче.</div>' +
+        '</div>' +
+        '<label style="margin-bottom:10px;display:block;font-size:0.875rem;font-weight:500;color:#4a5568;">Мова інтерфейсу Office <span style="color:#e53e3e;">*</span></label>' +
+        '<div class="radio-group">' +
+          '<label class="radio-option" onclick="pick(this,\'office_lang_' + i + '\')"><input type="radio" name="office_lang_' + i + '" value="Українська"> 🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span></label>' +
+          '<label class="radio-option" onclick="pick(this,\'office_lang_' + i + '\')"><input type="radio" name="office_lang_' + i + '" value="Російська"> 🔴 Російська <span class="badge badge-ru">! Потребує заміни</span></label>' +
+          '<label class="radio-option" onclick="pick(this,\'office_lang_' + i + '\')"><input type="radio" name="office_lang_' + i + '" value="Англійська"> 🇬🇧 Англійська</label>' +
+          '<label class="radio-option" onclick="pick(this,\'office_lang_' + i + '\')"><input type="radio" name="office_lang_' + i + '" value="Office не встановлений"> ⛔ Office не встановлений</label>' +
+          '<label class="radio-option" onclick="pick(this,\'office_lang_' + i + '\')"><input type="radio" name="office_lang_' + i + '" value="Не знаю"> 🤷 Не знаю / важко визначити</label>' +
+        '</div>' +
+      '</div>';
+  });
+
+  document.getElementById('pcBlocks').innerHTML = html;
+
+  // Оновити номер блоку приміток
+  var notesNum = pcs.length + 2;
+  document.querySelector('#notesCard .section-num').textContent = notesNum;
 }
 
 function onNameKey(e) {
@@ -1065,26 +987,34 @@ function pick(label, name) {
 //  Відправка
 // ─────────────────────────────────────────────
 function submitForm() {
-  var errors = [];
-
-  if (!selectedEmployee) errors.push('Оберіть своє ім\'я зі списку');
-
-  // Якщо кілька ПК — перевіряємо чи обрано
-  var pcNum = '';
-  if (selectedEmployee) {
-    if (selectedEmployee.pcs.length === 1) {
-      pcNum = String(selectedEmployee.pcs[0]);
-    } else {
-      var chosen = document.querySelector('[name="pc_choice"]:checked');
-      if (!chosen) { errors.push('Оберіть ПК зі списку'); }
-      else { pcNum = chosen.value; }
-    }
+  if (!selectedEmployee) {
+    var errorDiv = document.getElementById('errorMsg');
+    errorDiv.innerHTML = '❌ Оберіть своє ім\'я зі списку';
+    errorDiv.style.display = 'block';
+    return;
   }
 
-  var winLang    = document.querySelector('[name="win_lang"]:checked');
-  var officeLang = document.querySelector('[name="office_lang"]:checked');
-  if (!winLang)    errors.push('Оберіть мову Windows');
-  if (!officeLang) errors.push('Оберіть мову Office');
+  var errors = [];
+  var payloads = [];
+  var notes = document.getElementById('notes').value.trim();
+
+  selectedEmployee.pcs.forEach(function(pc, i) {
+    var pcLabel  = PC_LABELS[pc] || ('ПК №' + pc);
+    var winLang  = document.querySelector('[name="win_lang_' + i + '"]:checked');
+    var offLang  = document.querySelector('[name="office_lang_' + i + '"]:checked');
+    if (!winLang)  errors.push('Оберіть мову Windows для: ' + pcLabel);
+    if (!offLang)  errors.push('Оберіть мову Office для: '  + pcLabel);
+    payloads.push({
+      name:           selectedEmployee.name,
+      department:     selectedEmployee.dept,
+      pc_number:      String(pc),
+      pc_label:       pcLabel,
+      win_lang:       winLang  ? winLang.value  : '',
+      office_version: document.getElementById('office_version_' + i).value,
+      office_lang:    offLang  ? offLang.value   : '',
+      notes:          notes
+    });
+  });
 
   var errorDiv = document.getElementById('errorMsg');
   if (errors.length > 0) {
@@ -1099,26 +1029,18 @@ function submitForm() {
   btn.disabled = true;
   btn.textContent = '⏳ Надсилаємо…';
 
-  var payload = {
-    name:           selectedEmployee.name,
-    department:     selectedEmployee.dept,
-    pc_number:      pcNum,
-    pc_label:       PC_LABELS[parseInt(pcNum)] || pcNum,
-    win_lang:       winLang.value,
-    office_version: document.getElementById('office_version').value,
-    office_lang:    officeLang.value,
-    notes:          document.getElementById('notes').value.trim()
-  };
-
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
+  Promise.all(payloads.map(function(payload) {
+    return fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }))
   .then(function() {
     document.getElementById('thankYou').classList.add('show');
     document.querySelectorAll('.header, .card').forEach(function(el) { el.style.display = 'none'; });
+    document.getElementById('pcBlocks').style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   })
   .catch(function(err) {
