@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Опитування щодо мови ПЗ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container { max-width: 680px; margin: 0 auto; }
+
+    .header {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      padding: 28px 32px;
+    }
+    .header h1 { font-size: 1.35rem; font-weight: 600; margin-bottom: 6px; }
+    .header p  { font-size: 0.875rem; opacity: 0.85; }
+
+    .card {
+      background: white;
+      padding: 28px 32px;
+      border-left: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+    }
+    .card.last {
+      border-radius: 0 0 12px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f0fe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-num {
+      background: #1a73e8;
+      color: white;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .field-group { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+    label .req { color: #e53e3e; margin-left: 3px; }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #2d3748;
+      transition: border-color 0.2s;
+      background: #fafafa;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1a73e8;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+    }
+    input[readonly] {
+      background: #f7fafc;
+      color: #718096;
+      cursor: default;
+    }
+    textarea { resize: vertical; min-height: 70px; }
+
+    /* ── Автокомпліт ── */
+    .autocomplete-wrap { position: relative; }
+
+    .autocomplete-dropdown {
+      display: none;
+      position: absolute;
+      z-index: 100;
+      left: 0; right: 0;
+      top: calc(100% + 3px);
+      background: white;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .autocomplete-dropdown.open { display: block; }
+
+    .ac-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #f0f4f8;
+      line-height: 1.3;
+    }
+    .ac-item:last-child { border-bottom: none; }
+    .ac-item:hover, .ac-item.active { background: #e8f0fe; }
+    .ac-item strong { color: #1a73e8; }
+    .ac-item .ac-dept {
+      font-size: 0.78rem;
+      color: #718096;
+      margin-top: 2px;
+    }
+    .ac-empty {
+      padding: 14px;
+      color: #a0aec0;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    .name-valid-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      display: none;
+    }
+
+    /* ── Вибір ПК ── */
+    .pc-selector { display: none; margin-top: 12px; }
+    .pc-selector label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+    .pc-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pc-radio-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid #cbd5e0;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+    .pc-radio-btn:hover { border-color: #1a73e8; background: #f0f7ff; }
+    .pc-radio-btn input { accent-color: #1a73e8; }
+    .pc-radio-btn.selected { border-color: #1a73e8; background: #e8f0fe; font-weight: 500; }
+
+    /* ── Radio-варіанти відповідей ── */
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 10px 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+    }
+    .radio-option:hover { border-color: #1a73e8; background: #f0f7ff; }
+    .radio-option input[type="radio"] {
+      width: 18px; height: 18px;
+      accent-color: #1a73e8;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .radio-option.selected { border-color: #1a73e8; background: #e8f0fe; }
+    .badge {
+      margin-left: auto;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-ru { background: #fce8e6; color: #c62828; }
+    .badge-uk { background: #e6f4ea; color: #2e7d32; }
+
+    .path { font-family: monospace; background: #fff3cd; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+
+    /* ── Візуальне порівняння мов ── */
+    .lang-check {
+      background: #f8faff;
+      border: 1px solid #c5d8fd;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .lang-check-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lang-check-action {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1a56db;
+      margin-bottom: 10px;
+      padding: 7px 12px;
+      background: #e8f0fe;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .lang-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .lang-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+    .lang-box-uk {
+      background: #e6f4ea;
+      border: 1.5px solid #81c784;
+    }
+    .lang-box-ru {
+      background: #fce8e6;
+      border: 1.5px solid #e57373;
+    }
+    .lang-box-label {
+      font-weight: 700;
+      font-size: 0.78rem;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .lang-box-uk .lang-box-label { color: #2e7d32; }
+    .lang-box-ru .lang-box-label { color: #c62828; }
+    .lang-word {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 0.88rem;
+      display: block;
+      padding: 1px 0;
+    }
+    .lang-word span {
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .mock-menu {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 4px 0;
+      font-size: 0.82rem;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.12);
+      line-height: 1;
+    }
+    .mock-menu-item {
+      padding: 5px 14px;
+      display: block;
+      color: #222;
+      white-space: nowrap;
+    }
+    .mock-menu-item.highlight {
+      background: #0078d7;
+      color: white;
+    }
+    .mock-menu-sep {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 3px 0;
+    }
+    .mock-ribbon {
+      background: #f3f3f3;
+      border: 1px solid #ccc;
+      border-radius: 4px 4px 0 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .mock-ribbon-tabs {
+      display: flex;
+      font-size: 0.78rem;
+      border-bottom: 1px solid #ccc;
+    }
+    .mock-ribbon-tab {
+      padding: 5px 10px;
+      color: #444;
+      white-space: nowrap;
+    }
+    .mock-ribbon-tab.active-tab {
+      background: white;
+      border-bottom: 2px solid #0078d7;
+      color: #0078d7;
+      font-weight: 600;
+    }
+    .mock-file-tab {
+      background: #0078d7;
+      color: white;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+    }
+    @media (max-width: 420px) {
+      .lang-compare { grid-template-columns: 1fr; }
+    }
+
+    /* ── Кнопка ── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover { opacity: 0.92; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* ── Повідомлення ── */
+    .message { display: none; padding: 14px 18px; border-radius: 8px; margin-top: 16px; font-size: 0.9rem; font-weight: 500; }
+    .message.error { background: #fce8e6; color: #b71c1c; border: 1px solid #f5c6c2; }
+
+    /* ── Дякуємо ── */
+    .thank-you {
+      display: none;
+      text-align: center;
+      background: white;
+      border-radius: 12px;
+      padding: 60px 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .thank-you.show { display: block; }
+    .thank-you .big-icon { font-size: 4rem; margin-bottom: 20px; }
+    .thank-you h2 { color: #1e7e34; font-size: 1.5rem; margin-bottom: 12px; }
+    .thank-you p { color: #666; line-height: 1.6; }
+
+    .divider { height: 1px; background: #e2e8f0; margin: 20px 0; }
+
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .header, .card { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Екран подяки -->
+  <div class="thank-you" id="thankYou">
+    <div class="big-icon">✅</div>
+    <h2>Дякуємо!</h2>
+    <p>Ваші дані успішно записані.<br>Більше нічого робити не потрібно.</p>
+  </div>
+
+  <!-- Шапка -->
+  <div class="header">
+    <h1>Опитування щодо мови програмного забезпечення</h1>
+    <p>Заповніть форму — це займе 2–3 хвилини. Нижче є підказки як перевірити мову.</p>
+  </div>
+
+  <!-- Блок 1: Хто я -->
+  <div class="card">
+    <div class="section-title"><span class="section-num">1</span> Ваші дані</div>
+
+    <div class="field-group">
+      <label>Ваше прізвище та ім'я <span class="req">*</span>
+        <span style="font-size:0.78rem;font-weight:400;color:#718096;"> — почніть вводити і оберіть себе зі списку</span>
+      </label>
+      <div class="autocomplete-wrap">
+        <input type="text" id="nameInput" placeholder="Наприклад: Іваненко або Оксана…"
+               autocomplete="off" oninput="onNameInput()" onkeydown="onNameKey(event)" onfocus="onNameInput()">
+        <span class="name-valid-icon" id="nameValidIcon">✅</span>
+        <div class="autocomplete-dropdown" id="acDropdown"></div>
+      </div>
+      <input type="hidden" id="selectedName">
+      <input type="hidden" id="selectedDept">
+    </div>
+
+    <div class="field-group">
+      <label>Підрозділ</label>
+      <input type="text" id="deptDisplay" readonly placeholder="Заповниться автоматично після вибору імені">
+    </div>
+
+    <div class="field-group" id="pcField">
+      <label>ПК за аудитом</label>
+      <input type="text" id="pcDisplay" readonly placeholder="Заповниться автоматично після вибору імені">
+      <!-- Якщо кілька ПК -->
+      <div class="pc-selector" id="pcSelector">
+        <label style="margin-top:10px;">За вами закріплено кілька ПК — оберіть, про який заповнюєте:</label>
+        <div class="pc-radio-group" id="pcRadioGroup"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок 2: Мова Windows -->
+  <div class="card">
+    <div class="section-title"><span class="section-num">2</span> Мова інтерфейсу Windows</div>
+
+    <div class="lang-check">
+      <div class="lang-check-title">🖱️ Як визначити мову Windows — одна дія:</div>
+      <div class="lang-check-action">Правий клік миші по порожньому місцю робочого столу</div>
+      <div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">З'явиться контекстне меню. Порівняйте текст із зразками нижче:</div>
+      <div class="lang-compare">
+        <div class="lang-box lang-box-uk">
+          <span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>
+          <div class="mock-menu">
+            <span class="mock-menu-item">Переглянути</span>
+            <span class="mock-menu-item">Впорядкувати за</span>
+            <span class="mock-menu-item">Оновити</span>
+            <span class="mock-menu-sep"></span>
+            <span class="mock-menu-item highlight"><span>Персоналізація</span></span>
+          </div>
+        </div>
+        <div class="lang-box lang-box-ru">
+          <span class="lang-box-label">🔴 РОСІЙСЬКА</span>
+          <div class="mock-menu">
+            <span class="mock-menu-item">Вид</span>
+            <span class="mock-menu-item">Сортировать по</span>
+            <span class="mock-menu-item">Обновить</span>
+            <span class="mock-menu-sep"></span>
+            <span class="mock-menu-item highlight"><span>Персонализация</span></span>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:#718096;margin-top:8px;">
+        💡 Windows 7: правий клік → якщо внизу «<strong>Властивості</strong>» — українська, «<strong>Свойства</strong>» — російська.
+      </div>
+    </div>
+
+    <div class="radio-group">
+      <label class="radio-option" onclick="pick(this,'win_lang')">
+        <input type="radio" name="win_lang" value="Українська">
+        🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span>
+      </label>
+      <label class="radio-option" onclick="pick(this,'win_lang')">
+        <input type="radio" name="win_lang" value="Російська">
+        🔴 Російська <span class="badge badge-ru">! Потребує заміни</span>
+      </label>
+      <label class="radio-option" onclick="pick(this,'win_lang')">
+        <input type="radio" name="win_lang" value="Англійська">
+        🇬🇧 Англійська
+      </label>
+      <label class="radio-option" onclick="pick(this,'win_lang')">
+        <input type="radio" name="win_lang" value="Не знаю">
+        🤷 Не знаю / важко визначити
+      </label>
+    </div>
+  </div>
+
+  <!-- Блок 3: Microsoft Office -->
+  <div class="card">
+    <div class="section-title"><span class="section-num">3</span> Microsoft Office</div>
+
+    <div class="field-group">
+      <label>Версія Microsoft Office</label>
+      <select id="office_version">
+        <option value="">— оберіть версію —</option>
+        <option>Microsoft Office 2010</option>
+        <option>Microsoft Office 2013</option>
+        <option>Microsoft Office 2016</option>
+        <option>Microsoft Office 2019</option>
+        <option>Microsoft Office 2021</option>
+        <option>Microsoft Office 2024 / 365</option>
+        <option>Office не встановлений</option>
+        <option>Не знаю версію</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="lang-check">
+      <div class="lang-check-title">📄 Як визначити мову Office — одна дія:</div>
+      <div class="lang-check-action">Відкрийте будь-який файл Word або Excel</div>
+      <div style="font-size:0.8rem;color:#718096;margin-bottom:10px;">Подивіться на вкладки у верхній панелі. Порівняйте з зразками нижче:</div>
+      <div class="lang-compare">
+        <div class="lang-box lang-box-uk">
+          <span class="lang-box-label">🇺🇦 УКРАЇНСЬКА</span>
+          <div class="mock-ribbon">
+            <div class="mock-ribbon-tabs">
+              <span class="mock-file-tab">Файл</span>
+              <span class="mock-ribbon-tab active-tab">Основне</span>
+              <span class="mock-ribbon-tab">Вставлення</span>
+              <span class="mock-ribbon-tab">Формули</span>
+            </div>
+          </div>
+        </div>
+        <div class="lang-box lang-box-ru">
+          <span class="lang-box-label">🔴 РОСІЙСЬКА</span>
+          <div class="mock-ribbon">
+            <div class="mock-ribbon-tabs">
+              <span class="mock-file-tab">Файл</span>
+              <span class="mock-ribbon-tab active-tab">Главная</span>
+              <span class="mock-ribbon-tab">Вставка</span>
+              <span class="mock-ribbon-tab">Формулы</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:#718096;margin-top:8px;">
+        💡 Якщо Office не встановлений або не відкривається — оберіть відповідний варіант нижче.
+      </div>
+    </div>
+
+    <label style="margin-bottom:10px;display:block;">Мова інтерфейсу Office <span class="req">*</span></label>
+    <div class="radio-group">
+      <label class="radio-option" onclick="pick(this,'office_lang')">
+        <input type="radio" name="office_lang" value="Українська">
+        🇺🇦 Українська <span class="badge badge-uk">✓ Норма</span>
+      </label>
+      <label class="radio-option" onclick="pick(this,'office_lang')">
+        <input type="radio" name="office_lang" value="Російська">
+        🔴 Російська <span class="badge badge-ru">! Потребує заміни</span>
+      </label>
+      <label class="radio-option" onclick="pick(this,'office_lang')">
+        <input type="radio" name="office_lang" value="Англійська">
+        🇬🇧 Англійська
+      </label>
+      <label class="radio-option" onclick="pick(this,'office_lang')">
+        <input type="radio" name="office_lang" value="Office не встановлений">
+        ⛔ Office не встановлений
+      </label>
+      <label class="radio-option" onclick="pick(this,'office_lang')">
+        <input type="radio" name="office_lang" value="Не знаю">
+        🤷 Не знаю / важко визначити
+      </label>
+    </div>
+  </div>
+
+  <!-- Блок 4: Примітки + Submit -->
+  <div class="card last">
+    <div class="section-title"><span class="section-num">4</span> Додатково (необов'язково)</div>
+    <div class="field-group">
+      <label>Примітки або запитання до IT-відділу</label>
+      <textarea id="notes" placeholder="Наприклад: «На ПК немає Office» або «Windows на двох мовах»…"></textarea>
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">📨 Надіслати відповідь</button>
+    <div class="message error" id="errorMsg"></div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────────
+//  ЗАМІНІТЬ URL після деплою Google Apps Script
+// ─────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnIeJ1-IEMlk604mz-nesO-RUfuqxo9VArXeH8Q9YauTmXHPSw9PI4Oy5Z3YS64bhk/exec';
+
+// ─────────────────────────────────────────────
+//  Мітки пристроїв (тип + процесор)
+// ─────────────────────────────────────────────
+const OFFICE_VERSIONS = {
+  1: 'Microsoft Office 2019',
+  2: 'Microsoft Office 2019',
+  3: 'Microsoft Office 2016',
+  4: 'Microsoft Office 2021',
+  5: 'Microsoft Office 2016',
+  6: 'Microsoft Office 2016',
+  7: 'Microsoft Office 2013',
+  8: 'Microsoft Office 2016',
+  9: 'Microsoft Office 2016',
+  10: 'Microsoft Office 2016',
+  11: 'Microsoft Office 2016',
+  12: 'Microsoft Office 2016',
+  13: 'Microsoft Office 2016',
+  14: 'Microsoft Office 2016',
+  15: 'Microsoft Office 2013',
+  16: 'Microsoft Office 2016',
+  17: 'Не знаю версію',
+  18: 'Microsoft Office 2019',
+  19: 'Microsoft Office 2019',
+  20: 'Microsoft Office 2019',
+  21: 'Не знаю версію',
+  22: 'Microsoft Office 2016',
+  23: 'Не знаю версію',
+  24: 'Microsoft Office 2016',
+  25: 'Microsoft Office 2016',
+  26: 'Microsoft Office 2016',
+  27: 'Microsoft Office 2021',
+  28: 'Microsoft Office 2019',
+  29: 'Microsoft Office 2019',
+  30: 'Microsoft Office 2019',
+  31: 'Microsoft Office 2016',
+  32: 'Microsoft Office 2016',
+  33: 'Microsoft Office 2016',
+  34: 'Microsoft Office 2016',
+  35: 'Microsoft Office 2010',
+  36: 'Не знаю версію',
+  37: 'Microsoft Office 2019',
+  38: 'Microsoft Office 2021',
+  39: 'Microsoft Office 2016',
+  40: 'Microsoft Office 2019',
+  41: 'Microsoft Office 2019',
+  42: 'Microsoft Office 2013',
+  43: 'Microsoft Office 2016',
+  44: 'Microsoft Office 2010',
+  45: 'Microsoft Office 2016',
+  46: 'Microsoft Office 2016',
+  47: 'Microsoft Office 2010',
+  48: 'Microsoft Office 2013',
+  49: 'Не знаю версію',
+  50: 'Microsoft Office 2016',
+  51: 'Microsoft Office 2013',
+  52: 'Microsoft Office 2010',
+  53: 'Microsoft Office 2013',
+  54: 'Не знаю версію',
+  55: 'Microsoft Office 2013',
+  56: 'Microsoft Office 2016',
+  57: 'Не знаю версію',
+  58: 'Не знаю версію',
+  59: 'Microsoft Office 2016',
+  60: 'Microsoft Office 2016',
+  61: 'Microsoft Office 2013',
+  62: 'Office не встановлений',
+  63: 'Microsoft Office 2016',
+  64: 'Microsoft Office 2016',
+  65: 'Microsoft Office 2010',
+  66: 'Microsoft Office 2019',
+  67: 'Microsoft Office 2019',
+  68: 'Microsoft Office 2019',
+  69: 'Microsoft Office 2013',
+  70: 'Microsoft Office 2019',
+  71: 'Microsoft Office 2019',
+  72: 'Microsoft Office 2019',
+  73: 'Microsoft Office 2016',
+  74: 'Microsoft Office 2016',
+  75: 'Microsoft Office 2016',
+  76: 'Microsoft Office 2019',
+  77: 'Microsoft Office 2019',
+  78: 'Microsoft Office 2016',
+  79: 'Не знаю версію',
+  80: 'Microsoft Office 2013',
+  81: 'Microsoft Office 2021',
+  82: 'Microsoft Office 2010',
+  83: 'Microsoft Office 2021',
+  84: 'Microsoft Office 2013',
+  85: 'Не знаю версію',
+  86: 'Microsoft Office 2021',
+  87: 'Microsoft Office 2024 / 365',
+  88: 'Microsoft Office 2016',
+  89: 'Не знаю версію',
+  90: 'Microsoft Office 2016',
+  91: 'Не знаю версію',
+  92: 'Microsoft Office 2016',
+  93: 'Microsoft Office 2016',
+  94: 'Не знаю версію',
+  95: 'Office не встановлений',
+  96: 'Microsoft Office 2016',
+  97: 'Microsoft Office 2021',
+  98: 'Microsoft Office 2016',
+  99: 'Microsoft Office 2016',
+  100: 'Microsoft Office 2016',
+};
+
+const PC_LABELS = {
+  1: 'ПК • Intel Core i3-12100',
+  2: 'ПК • Intel Core i3-8100',
+  3: 'Ноутбук • Intel Core i3-1315U',
+  4: 'Ноутбук • Intel Core i3-1315U',
+  5: 'ПК • AMD A6-9500',
+  6: 'ПК • AMD A8-9600',
+  7: 'Ноутбук • AMD Ryzen 5 6600H',
+  8: 'ПК • Intel Core i5-1035G1',
+  9: 'ПК • Intel Core i5-1035G1',
+  10: 'ПК • Intel Core i5-1035G1',
+  11: 'ПК • AMD A4-4000',
+  12: 'Ноутбук • Intel Core i3-1315U',
+  13: 'ПК • AMD A6-9500',
+  14: 'ПК • AMD A6-9500',
+  15: 'ПК • Intel Core i3-12100',
+  16: 'ПК • Intel Pentium E2180',
+  17: 'ПК • AMD A4-3300',
+  18: 'ПК • Intel Core i3-10100',
+  19: 'ПК • Intel Core i3-10100',
+  20: 'ПК • Intel Core i3-10100',
+  21: 'ПК • Intel Pentium E5200',
+  22: 'ПК • Intel Core i3-3220',
+  23: 'ПК • AMD (невідомий)',
+  24: 'ПК • Intel Core i5-4460S',
+  25: 'Ноутбук • Intel Core i3-1125G4',
+  26: 'Ноутбук • Intel Core i3-5010U',
+  27: 'Ноутбук • Intel Core i5-1335U',
+  28: 'ПК • AMD Athlon II X2 250',
+  29: 'ПК • Intel Core i3-3220',
+  30: 'ПК • Intel Core i3-12400',
+  31: 'ПК • Intel Core i3-8100',
+  32: 'ПК • AMD A8-9600',
+  33: 'Ноутбук • AMD Ryzen 5 5500U',
+  34: 'Ноутбук • Intel Core i3-1125G4',
+  35: 'ПК • AMD A8-9600',
+  36: 'ПК • AMD A4-4000',
+  37: 'Ноутбук • AMD Ryzen 3 5300U',
+  38: 'Ноутбук • AMD Ryzen 3 5300U',
+  39: 'ПК • Intel Core i3-8100',
+  40: 'ПК • AMD A8-9600',
+  41: 'Ноутбук • AMD Ryzen 5 5500U',
+  42: 'Ноутбук • Intel Core i3-1125G4',
+  43: 'ПК • Intel Core i7-7700',
+  44: 'ПК • AMD A4-4020',
+  45: 'ПК • AMD A6-9500',
+  46: 'Ноутбук • AMD Ryzen 5 5500U',
+  47: 'ПК • Intel Pentium E5200',
+  48: 'Ноутбук • Intel Core i3-1305U',
+  49: 'ПК • AMD Athlon II X2 250',
+  50: 'ПК • Intel Pentium E5200',
+  51: 'Ноутбук • Intel Core i3-1305U',
+  52: 'ПК • AMD Athlon II 7750',
+  53: 'ПК • AMD Athlon II X3 450',
+  54: 'ПК • AMD A4-4020',
+  55: 'Ноутбук • Intel Core i3-1125G4',
+  56: 'ПК • AMD A6-7400K',
+  57: 'ПК • AMD A4-4020',
+  58: 'ПК • Intel Pentium E5200',
+  59: 'ПК • AMD Athlon 64 X2 5000+',
+  60: 'ПК • Intel Celeron G1610',
+  61: 'ПК • Intel Core 2 Duo E7400',
+  62: 'ПК • Intel Core i3-10100',
+  63: 'Ноутбук • AMD Ryzen 3 5300U',
+  64: 'Ноутбук • AMD Ryzen 3 5500U',
+  65: 'ПК • AMD A4-4020',
+  66: 'ПК • Intel Celeron G5905',
+  67: 'ПК • Intel Celeron G5905',
+  68: 'Ноутбук • Intel Core i7-7700',
+  69: 'Ноутбук • Intel Core i3-1315U',
+  70: 'ПК • Intel Celeron G5905',
+  71: 'ПК • Intel Celeron G5905',
+  72: 'ПК • Intel Celeron G5905',
+  73: 'ПК • Intel Celeron G5905',
+  74: 'ПК • Intel Celeron G5905',
+  75: 'ПК • Intel Celeron G5905',
+  76: 'Ноутбук • Intel Core i3-1315U',
+  77: 'Ноутбук • Intel Core i3-1125G4',
+  78: 'ПК • Intel Core 2 Duo E7500',
+  79: 'Ноутбук • AMD Ryzen 3 3200U',
+  80: 'ПК • AMD A6-9500',
+  81: 'ПК • Intel Core i3-4150',
+  82: 'ПК • AMD A8-9600',
+  83: 'ПК • AMD A6-9500',
+  84: 'ПК • Intel Core 2 Duo E6550',
+  85: 'ПК • AMD A8-9600',
+  86: 'ПК • Intel Core i3-10105',
+  87: 'Ноутбук • Intel Core i3-1315U',
+  88: 'Ноутбук • Intel Core i3-1125G4',
+  89: 'ПК • AMD A6-9500',
+  90: 'ПК • AMD A4-4000',
+  91: 'ПК • Intel Celeron',
+  92: 'Ноутбук • Intel Core i3-1125G4',
+  93: 'ПК • AMD A4-5300',
+  94: 'ПК • AMD A8-9600',
+  95: 'Ноутбук • Intel Core i3-1005G1',
+  96: 'ПК • Intel Core i5-1035G1',
+  97: 'Ноутбук • Intel Core i3-1215U',
+  98: 'Ноутбук • Intel Core i3-1125G4',
+  99: 'Ноутбук • AMD Ryzen 5 5500U',
+  100: 'Ноутбук • Intel Core i5-1235U',
+};
+
+// ─────────────────────────────────────────────
+//  База працівників (з аудиту)
+// ─────────────────────────────────────────────
+const EMPLOYEES = [
+  { name: "Абрам'юк Любов",         dept: "Бактеріологічна лабораторія",                                                                          pcs: [25] },
+  { name: "Бандурак Надія",          dept: "Бактеріологічна лабораторія",                                                                          pcs: [21] },
+  { name: "Бахняк Іванна",           dept: "Відділ бухгалтерського обліку та звітності",                                                           pcs: [73] },
+  { name: "Бідочко Ірина",           dept: "Лабораторія особливо-небезпечних інфекцій",                                                            pcs: [93] },
+  { name: "Бліндар Оксана",          dept: "Вірусологічна лабораторія",                                                                            pcs: [81] },
+  { name: "Богович Христина",        dept: "Бактеріологічна лабораторія",                                                                          pcs: [18] },
+  { name: "Боєчко Михайло",          dept: "Відділ імунопрофілактики",                                                                             pcs: [98] },
+  { name: "Бойко Оксана",            dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [60] },
+  { name: "Бойко Ольга",             dept: "Лабораторія особливо-небезпечних інфекцій",                                                            pcs: [92] },
+  { name: "Босацька Лілія",          dept: "Відділ імунопрофілактики",                                                                             pcs: [45] },
+  { name: "Брендзей Марія",          dept: "Відділ епідеміологічного нагляду та профілактики інфекційних хвороб",                                  pcs: [40] },
+  { name: "Гаврилів Галина",         dept: "Фінансово-економічний відділ",                                                                         pcs: [69] },
+  { name: "Галачинський Богдан",     dept: "Тренінговий центр",                                                                                    pcs: [97] },
+  { name: "Гірак Світлана",          dept: "Бактеріологічна лабораторія",                                                                          pcs: [20] },
+  { name: "Гнатків Оксана",          dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [58] },
+  { name: "Джус Тетяна",             dept: "Заступник генерального директора з питань досліджень біологічних факторів",                            pcs: [26, 27] },
+  { name: "Дорошенко Яна",           dept: "Фінансово-економічний відділ",                                                                         pcs: [70] },
+  { name: "Драганчук Юлія",          dept: "Організаційний відділ",                                                                                pcs: [4] },
+  { name: "Ємець Надія",             dept: "Бактеріологічна лабораторія",                                                                          pcs: [24] },
+  { name: "Зайцева Антоніна",        dept: "Відділ документального забезпечення",                                                                  pcs: [8] },
+  { name: "Закальницька Галина",     dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [49] },
+  { name: "Заник Мар'яна",           dept: "Відділ управління персоналом",                                                                         pcs: [15] },
+  { name: "Здоровий Юрій",           dept: "Відділ безпеки середовища життєдіяльності",                                                            pcs: [36] },
+  { name: "Іваночко Оксана",         dept: "Відділ епідеміологічного нагляду та профілактики інфекційних хвороб",                                  pcs: [39] },
+  { name: "Івасів Ганна",            dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [53] },
+  { name: "Ільків Валентина",        dept: "Відділ бухгалтерського обліку",                                                                        pcs: [66] },
+  { name: "Ільницька Наталія",       dept: "Радіологічна лабораторія",                                                                             pcs: [87, 89] },
+  { name: "Кабан Мирослава",         dept: "Радіологічна лабораторія",                                                                             pcs: [91] },
+  { name: "Калабайда Вікторія",      dept: "Санітарно-карантинний відділ",                                                                         pcs: [44] },
+  { name: "Канюк Софія",             dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [49] },
+  { name: "Козак Уляна",             dept: "Відділ антимікробної резистентності та інфекційного контролю",                                         pcs: [63] },
+  { name: "Костюк Людмила",          dept: "Радіологічна лабораторія",                                                                             pcs: [90] },
+  { name: "Креховецька Анастасія",   dept: "Відділ імунопрофілактики",                                                                             pcs: [99, 100] },
+  { name: "Кривень Марія",           dept: "Відділ бухгалтерського обліку",                                                                        pcs: [67] },
+  { name: "Кругла Софія",            dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [55, 62] },
+  { name: "Кузишин Наталія",         dept: "Лабораторія особливо-небезпечних інфекцій",                                                            pcs: [94] },
+  { name: "Кукула Анастасія",        dept: "Відділ епідеміологічного нагляду та профілактики неінфекційних хвороб",                                pcs: [76] },
+  { name: "Курилів Марія",           dept: "Лабораторія особливо-небезпечних інфекцій",                                                            pcs: [95] },
+  { name: "Кушнір Наталія",          dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [47] },
+  { name: "Кучерак Тетяна",          dept: "Заступник генерального директора з впровадження системи управління якістю лабораторних досліджень",    pcs: [65] },
+  { name: "Лабатчук Мар'яна",        dept: "Бактеріологічна лабораторія",                                                                          pcs: [22] },
+  { name: "Левицька Юлія",           dept: "Головний бухгалтер",                                                                                   pcs: [68] },
+  { name: "Ліпатнікова Людмила",     dept: "Інформаційний центр",                                                                                  pcs: [96] },
+  { name: "Лиско Олег",              dept: "Відділ інформаційних систем та захисту інформації",                                                    pcs: [30] },
+  { name: "Локатир Марта",           dept: "Відділ імунопрофілактики",                                                                             pcs: [46] },
+  { name: "Мацюк Наталія",           dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [51] },
+  { name: "Матвіїв Світлана",        dept: "Організаційний відділ",                                                                                pcs: [5] },
+  { name: "Мельник Микола",          dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [52] },
+  { name: "Миська Оксана",           dept: "Заступник генерального директора з економічних питань",                                                pcs: [9] },
+  { name: "Нестерова Валентина",     dept: "Відділ бухгалтерського обліку та звітності",                                                           pcs: [74] },
+  { name: "Озарко Надія",            dept: "Фінансово-економічний відділ",                                                                         pcs: [71] },
+  { name: "Олексюк Ірина",           dept: "Паразитологічна лабораторія",                                                                          pcs: [16] },
+  { name: "Петрів Галина",           dept: "Відділ комунікації та інформаційно-роз'яснювальної роботи",                                            pcs: [6, 7] },
+  { name: "Пивовар Оксана",          dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [50] },
+  { name: "Пташник Алла",            dept: "Відділ управління персоналом",                                                                         pcs: [14] },
+  { name: "Радзівіл Мар'яна",        dept: "Відділ тендерних закупівель",                                                                          pcs: [33] },
+  { name: "Резнічек Наталія",        dept: "Відділ епідеміологічного нагляду та профілактики неінфекційних хвороб",                                pcs: [77] },
+  { name: "Резнічек Олег",           dept: "Сектор з питань мобілізаційної роботи та цивільного захисту",                                          pcs: [28] },
+  { name: "Ревчук Оксана",           dept: "Паразитологічна лабораторія",                                                                          pcs: [17] },
+  { name: "Романишин Людмила",       dept: "Відділ по роботі з персоналом та охорони праці",                                                       pcs: [31] },
+  { name: "Рошко Лілія",             dept: "Радіологічна лабораторія",                                                                             pcs: [88] },
+  { name: "Самуляк Наталія",         dept: "Відділ епідеміологічного нагляду та профілактики інфекційних хвороб",                                  pcs: [38] },
+  { name: "Савчук Руслан",           dept: "Генеральний директор",                                                                                 pcs: [10] },
+  { name: "Савчук Віта",             dept: "Відділ правового забезпечення",                                                                        pcs: [32] },
+  { name: "Селезнева Дар'я",         dept: "Відділ епідеміологічного нагляду та профілактики інфекційних хвороб",                                  pcs: [41] },
+  { name: "Сенюк Оксана",            dept: "Заступник генерального директора з організаційної діяльності",                                         pcs: [11, 12] },
+  { name: "Сергієнко Наталія",       dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [48] },
+  { name: "Сулятицький Святослав",   dept: "Відділ антимікробної резистентності та інфекційного контролю",                                         pcs: [64] },
+  { name: "Трифянчин Ярослав",       dept: "Відділ безпеки середовища життєдіяльності",                                                            pcs: [35] },
+  { name: "Федорів Ірина",           dept: "Санітарно-карантинний відділ",                                                                         pcs: [42, 43] },
+  { name: "Федорів Леся",            dept: "Бактеріологічна лабораторія",                                                                          pcs: [23] },
+  { name: "Федорів Руслана",         dept: "Відділ управління персоналом",                                                                         pcs: [13] },
+  { name: "Фіглевський Віталій",     dept: "В.о. заступника генерального директора з питань досліджень фізичних та хімічних факторів",             pcs: [37, 78] },
+  { name: "Фуштей Ірина",            dept: "Відділ безпеки середовища життєдіяльності",                                                            pcs: [34] },
+  { name: "Цюцяк Оксана",            dept: "Бактеріологічна лабораторія",                                                                          pcs: [19] },
+  { name: "Швидкова Оксана",         dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [57] },
+  { name: "Шовгенюк Христина",       dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [59] },
+  { name: "Ярчук Ірина",             dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [54] },
+  { name: "Ясінська Степанія",       dept: "Санітарно-гігієнічна лабораторія",                                                                     pcs: [61] },
+];
+
+// ─────────────────────────────────────────────
+//  Автокомпліт
+// ─────────────────────────────────────────────
+let selectedEmployee = null;
+let acActiveIndex = -1;
+
+function normalize(str) {
+  return str.toLowerCase()
+    .replace(/[''\u2019\u02bc]/g, "'")
+    .trim();
+}
+
+function onNameInput() {
+  var query = normalize(document.getElementById('nameInput').value);
+  var dropdown = document.getElementById('acDropdown');
+
+  // Скидаємо вибір
+  selectedEmployee = null;
+  document.getElementById('selectedName').value = '';
+  document.getElementById('selectedDept').value = '';
+  document.getElementById('deptDisplay').value = '';
+  document.getElementById('pcDisplay').value = '';
+  document.getElementById('nameValidIcon').style.display = 'none';
+  document.getElementById('pcSelector').style.display = 'none';
+  acActiveIndex = -1;
+
+  if (!query) {
+    dropdown.innerHTML = '';
+    dropdown.classList.remove('open');
+    return;
+  }
+
+  var results = EMPLOYEES.filter(function(e) {
+    var n = normalize(e.name);
+    // Шукаємо по кожному слову імені
+    return n.includes(query) ||
+           n.split(/\s+/).some(function(word) { return word.startsWith(query); });
+  });
+
+  if (results.length === 0) {
+    dropdown.innerHTML = '<div class="ac-empty">Нікого не знайдено. Перевірте написання.</div>';
+    dropdown.classList.add('open');
+    return;
+  }
+
+  dropdown.innerHTML = results.map(function(e, i) {
+    var highlighted = e.name.replace(
+      new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'),
+      '<strong>$1</strong>'
+    );
+    var pcLabel = e.pcs.map(function(n) { return PC_LABELS[n] || ('ПК №' + n); }).join(' / ');
+    return '<div class="ac-item" data-idx="' + i + '" onclick="selectEmployee(' + i + ',this,results_' + i + ')">' +
+           highlighted +
+           '<div class="ac-dept">' + e.dept + ' · ' + pcLabel + '</div>' +
+           '</div>';
+  }).join('');
+
+  // Зберігаємо results глобально для onclick
+  window._acResults = results;
+  dropdown.querySelectorAll('.ac-item').forEach(function(el, i) {
+    el.onclick = function() { selectEmployee(i); };
+  });
+
+  dropdown.classList.add('open');
+}
+
+function selectEmployee(idx) {
+  var emp = window._acResults ? window._acResults[idx] : EMPLOYEES[idx];
+  if (!emp) return;
+
+  selectedEmployee = emp;
+  document.getElementById('nameInput').value = emp.name;
+  document.getElementById('selectedName').value = emp.name;
+  document.getElementById('selectedDept').value = emp.dept;
+  document.getElementById('deptDisplay').value = emp.dept;
+  document.getElementById('nameValidIcon').style.display = 'block';
+
+  // Закриваємо dropdown
+  document.getElementById('acDropdown').classList.remove('open');
+
+  // ПК
+  if (emp.pcs.length === 1) {
+    document.getElementById('pcDisplay').value = PC_LABELS[emp.pcs[0]] || ('ПК №' + emp.pcs[0]);
+    document.getElementById('pcSelector').style.display = 'none';
+    setOfficeVersion(emp.pcs[0]);
+  } else {
+    document.getElementById('pcDisplay').value = emp.pcs.map(function(n){ return PC_LABELS[n]||('ПК №'+n); }).join(' / ') + ' — оберіть нижче';
+    buildPcSelector(emp.pcs);
+    document.getElementById('pcSelector').style.display = 'block';
+  }
+}
+
+function buildPcSelector(pcs) {
+  var group = document.getElementById('pcRadioGroup');
+  group.innerHTML = pcs.map(function(pc) {
+    var label = PC_LABELS[pc] || ('ПК №' + pc);
+    return '<label class="pc-radio-btn" id="pcbtn-' + pc + '">' +
+           '<input type="radio" name="pc_choice" value="' + pc + '" onchange="onPcChoose(' + pc + ')"> ' + label +
+           '</label>';
+  }).join('');
+}
+
+function setOfficeVersion(pcNum) {
+  var ver = OFFICE_VERSIONS[parseInt(pcNum)];
+  var sel = document.getElementById('office_version');
+  if (ver) {
+    sel.value = ver;
+    sel.style.background = '#f0f9ff';
+    sel.style.borderColor = '#1a73e8';
+  }
+}
+
+function onPcChoose(pc) {
+  document.querySelectorAll('.pc-radio-btn').forEach(function(b) { b.classList.remove('selected'); });
+  var btn = document.getElementById('pcbtn-' + pc);
+  if (btn) btn.classList.add('selected');
+  setOfficeVersion(pc);
+}
+
+function onNameKey(e) {
+  var dropdown = document.getElementById('acDropdown');
+  var items = dropdown.querySelectorAll('.ac-item');
+  if (!dropdown.classList.contains('open') || !items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    acActiveIndex = Math.min(acActiveIndex + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    acActiveIndex = Math.max(acActiveIndex - 1, 0);
+  } else if (e.key === 'Enter' && acActiveIndex >= 0) {
+    e.preventDefault();
+    selectEmployee(acActiveIndex);
+    return;
+  } else if (e.key === 'Escape') {
+    dropdown.classList.remove('open');
+    return;
+  } else { return; }
+
+  items.forEach(function(el, i) {
+    el.classList.toggle('active', i === acActiveIndex);
+  });
+  items[acActiveIndex] && items[acActiveIndex].scrollIntoView({ block: 'nearest' });
+}
+
+// Закрити dropdown при кліку поза ним
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.autocomplete-wrap')) {
+    document.getElementById('acDropdown').classList.remove('open');
+  }
+});
+
+// ─────────────────────────────────────────────
+//  Radio-вибір
+// ─────────────────────────────────────────────
+function pick(label, name) {
+  document.querySelectorAll('[name="' + name + '"]').forEach(function(r) {
+    r.closest('.radio-option').classList.remove('selected');
+  });
+  label.classList.add('selected');
+}
+
+// ─────────────────────────────────────────────
+//  Відправка
+// ─────────────────────────────────────────────
+function submitForm() {
+  var errors = [];
+
+  if (!selectedEmployee) errors.push('Оберіть своє ім\'я зі списку');
+
+  // Якщо кілька ПК — перевіряємо чи обрано
+  var pcNum = '';
+  if (selectedEmployee) {
+    if (selectedEmployee.pcs.length === 1) {
+      pcNum = String(selectedEmployee.pcs[0]);
+    } else {
+      var chosen = document.querySelector('[name="pc_choice"]:checked');
+      if (!chosen) { errors.push('Оберіть ПК зі списку'); }
+      else { pcNum = chosen.value; }
+    }
+  }
+
+  var winLang    = document.querySelector('[name="win_lang"]:checked');
+  var officeLang = document.querySelector('[name="office_lang"]:checked');
+  if (!winLang)    errors.push('Оберіть мову Windows');
+  if (!officeLang) errors.push('Оберіть мову Office');
+
+  var errorDiv = document.getElementById('errorMsg');
+  if (errors.length > 0) {
+    errorDiv.innerHTML = '❌ ' + errors.join('<br>❌ ');
+    errorDiv.style.display = 'block';
+    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  errorDiv.style.display = 'none';
+
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Надсилаємо…';
+
+  var payload = {
+    name:           selectedEmployee.name,
+    department:     selectedEmployee.dept,
+    pc_number:      pcNum,
+    pc_label:       PC_LABELS[parseInt(pcNum)] || pcNum,
+    win_lang:       winLang.value,
+    office_version: document.getElementById('office_version').value,
+    office_lang:    officeLang.value,
+    notes:          document.getElementById('notes').value.trim()
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function() {
+    document.getElementById('thankYou').classList.add('show');
+    document.querySelectorAll('.header, .card').forEach(function(el) { el.style.display = 'none'; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  })
+  .catch(function(err) {
+    errorDiv.innerHTML = '❌ Не вдалося надіслати. Перевірте інтернет та спробуйте ще раз.<br><small>' + err + '</small>';
+    errorDiv.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '📨 Надіслати відповідь';
+  });
+}
+</script>
+</body>
+</html>
